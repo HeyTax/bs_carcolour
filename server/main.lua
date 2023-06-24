@@ -1,58 +1,26 @@
 local ESX = nil
- 
-TriggerEvent('esx:getSharedObject', function( obj ) ESX = obj end)
- 
+
+TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+
 -- Removes the Item
 
-RegisterServerEvent('bs_carcolour:removeItem')
-AddEventHandler('bs_carcolour:removeItem', function(_source, removedItem)
-	local source = source
-	local xPlayer  = ESX.GetPlayerFromId(source)
-	
-	print(xPlayer.removeInventoryItem(removedItem, 1))
-	xPlayer.showNotification('Used: '.. removedItem .. ' Item')
+RegisterNetEvent('bs_carcolour:removeItem', function(removedItem)
+	local src = source
+	local xPlayer = ESX.GetPlayerFromId(src)
+
+	local inList = Config.colors[removedItem] -- Check if the item is in the list (to prevent cheating)
+	if not inList then
+		print(('bs_carcolour: %s attempted to remove an item that was not in the list!'):format(xPlayer.identifier))
+		return
+	end
+	xPlayer.removeInventoryItem(removedItem, 1)
+	xPlayer.showNotification('Used: ' .. removedItem .. ' Item')
 end)
 
 -- Change the row 'cargreen' to your database item you want to have
- 
-ESX.RegisterUsableItem('cargreen', function( source )
-	local _source  = source
-	local xPlayer  = ESX.GetPlayerFromId(_source)
-    TriggerClientEvent('bs_carcolour:use', source, 'greencolour')
-end)
- 
-ESX.RegisterUsableItem('carred', function( source )
-	local _source  = source
-	local xPlayer  = ESX.GetPlayerFromId(_source)
-    TriggerClientEvent('bs_carcolour:use', source, 'redcolour')
-end)
 
-ESX.RegisterUsableItem('carblue', function( source )
-	local _source  = source
-	local xPlayer  = ESX.GetPlayerFromId(_source)
-    TriggerClientEvent('bs_carcolour:use', source, 'bluecolour')
-end)
-
-ESX.RegisterUsableItem('caryellow', function( source )
-	local _source  = source
-	local xPlayer  = ESX.GetPlayerFromId(_source)
-    TriggerClientEvent('bs_carcolour:use', source, 'yellowcolour')
-end)
-
-ESX.RegisterUsableItem('carblack', function( source )
-	local _source  = source
-	local xPlayer  = ESX.GetPlayerFromId(_source)
-    TriggerClientEvent('bs_carcolour:use', source, 'blackcolour')
-end)
-
-ESX.RegisterUsableItem('carwhite', function( source )
-	local _source  = source
-	local xPlayer  = ESX.GetPlayerFromId(_source)
-    TriggerClientEvent('bs_carcolour:use', source, 'whitecolour')
-end)
-
-ESX.RegisterUsableItem('carbrown', function( source )
-	local _source  = source
-	local xPlayer  = ESX.GetPlayerFromId(_source)
-    TriggerClientEvent('bs_carcolour:use', source, 'browncolour')
-end)
+for k, v in pairs(Config.colors) do
+	ESX.RegisterUsableItem(v.item, function(source)
+		TriggerClientEvent('bs_carcolour:use', source, k)
+	end)
+end

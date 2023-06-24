@@ -6,7 +6,10 @@ description 'Blue Style Carcolour'
 
 version '1.6.0'
 
-shared_script '@es_extended/imports.lua'
+shared_scripts {
+	'@es_extended/imports.lua',
+	'config.lua'
+}
 
 server_scripts {
 	'server/main.lua',
